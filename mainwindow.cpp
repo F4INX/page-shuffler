@@ -38,7 +38,8 @@ ACTION_CLICKED(output_filename_button_clicked, output_filename_edit, getSaveFile
   { \
     /* If dropped event contains urls */ \
     if (ev->mimeData()->hasUrls()) { \
-      const QUrl &url = ev->mimeData()->urls().first(); \
+      QUrl url = ev->mimeData()->urls().first(); \
+      qDebug() << "Drop event: " << url; \
       /* If url is a local file */ \
       if (url.isLocalFile()) { \
         QString filename = url.toLocalFile(); \
