@@ -7,6 +7,9 @@
 #include <QProcess>
 #include <QDebug>
 #include <QException>
+#include <QDesktopServices>
+#include <QMessageBox>
+#include <QSettings>
 
 namespace Ui {
   class MainWindow;
@@ -30,6 +33,7 @@ public slots:
 
 private:
   Ui::MainWindow *ui;
+  QString pdftk_path;
   void shuffle();
   void display_final_file();
 };

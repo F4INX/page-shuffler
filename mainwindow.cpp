@@ -5,7 +5,15 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
 {
+  /* Setup UI */
   ui->setupUi(this);
+  /* Load settings */
+  QString settings_filename = QCoreApplication::applicationDirPath() + "/page-shuffler.ini";
+  QSettings settings(settings_filename, QSettings::IniFormat);
+  qDebug() << "settings filename: " << settings.fileName();
+  qDebug() << "settings: " << settings.allKeys();
+  pdftk_path = settings.value("paths/pdftk", "C:\\Program Files (x86)\\PDFtk\\bin\\pdftk.exe").toString();
+  qDebug() << "pdftk_path: " << pdftk_path;
 }
 
 MainWindow::~MainWindow()
@@ -55,8 +63,6 @@ QString escape(QString input)
 void MainWindow::shuffle()
 {
   /** Shuffle rectos and versos **/
-  /* Program path */
-  QString pdftk_path = "C:\\Program Files (x86)\\PDFtk\\bin\\pdftk.exe"; // FIXME ! Ugly
   /* Select base command string depending on shuffle mode */
   qDebug() << "mode_combobox index: " << ui->mode_combobox->currentIndex();
   const char* base_command;
@@ -81,22 +87,18 @@ void MainWindow::shuffle()
 
 void MainWindow::display_final_file()
 {
-  /** Displays final file **/
-  /* Viewer program path */
-  QString viewer_path = "C:\\Program Files\\SumatraPDF\\SumatraPDF.exe"; // FIXME ! Ugly
-  /* Build command string */
-  QString command = QString("\"%1\" \"%2\"") // FIXME ! Escaping.
-      .arg(escape(viewer_path))
-      .arg(escape(ui->output_filename_edit->text()));
-  qDebug() << command;
-  /* Run command string */
-  QProcess process;
-  process.start(command);
-  process.waitForFinished(-1); // NO TIMEOUT !
+  QDesktopServices::openUrl(ui->output_filename_edit->text());
 }
 
 void MainWindow::start_button_clicked()
 {
+  /* Check input data */
+  if (ui->output_filename_edit->text().isEmpty())
+  {
+    QMessageBox::warning(this, tr("Rectos/Versos"),
+                         tr("Préciser le fichier de sortie."));
+    return;
+  }
   /* Shuffle rectos and versos */
   shuffle();
   /* Displays final file */
