@@ -34,3 +34,5 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
+
+RC_FILE = page-shuffler.rc
